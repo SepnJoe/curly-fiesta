@@ -1,21 +1,19 @@
 <?php
 function getDbConnection()
 {
-    $server = 'serverniklas.database.windows.net';
-    $username = 'myUser';
-    $password = 'ABC8090DEF?';
-    $database = 'myDatabase';
+    $host = 'localhost';
+    $username = 'root';
+    $password = 'root';
+    $database = 'testdb';
 
-    $connectionOptions = array(
-        "Database" => $database,
-        "Uid" => $username,
-        "PWD" => $password
-    );
+    // Verbindung aufbauen
+    $conn = new mysqli($host, $username, $password, $database);
 
-    $conn = sqlsrv_connect($server, $connectionOptions);
-    if ($conn === false) {
-        die("Fehler bei der Verbindung zur Datenbank.");
+    // Fehlerbehandlung
+    if ($conn->connect_error) {
+        die("Fehler bei der Verbindung zur Datenbank: " . $conn->connect_error);
     }
+
     return $conn;
 }
 ?>

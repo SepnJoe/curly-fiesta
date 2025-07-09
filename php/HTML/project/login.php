@@ -3,7 +3,6 @@
      Datum: 03.06.2025 -->
 
 <?php
-session_start();
 //Datenbank Informationen
 require_once 'db_connect.php';
 $conn = getDbConnection();

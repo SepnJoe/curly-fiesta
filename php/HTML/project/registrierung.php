@@ -3,8 +3,7 @@
      Datum: 03.06.2025 -->
 
 <?php
-session_start();
-//Datenbank Informationen
+
 require_once 'db_connect.php';
 $conn = getDbConnection();
 
@@ -17,22 +16,30 @@ if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] === UPLOA
 }
 
 // Benutzer einfügen
-$stmtBenutzer = "INSERT INTO dbo.Benutzer ([E-Mail], Passwort) VALUES (?, ?)";
-$paramsBenutzer = array(
-    $_POST['E-Mail'],
-    password_hash($_POST['Passwort'], PASSWORD_DEFAULT)
-);
+$stmtBenutzer = $conn->prepare("INSERT INTO Benutzer (`E-Mail`, Passwort) VALUES (?, ?)");
+if (!$stmtBenutzer) {
+    die("Fehler beim Vorbereiten der Benutzer-Abfrage: " . $conn->error);
+}
+$email = $_POST['E-Mail'];
+$passwort = password_hash($_POST['Passwort'], PASSWORD_DEFAULT);
+$stmtBenutzer->bind_param("ss", $email, $passwort);
 
-$insertBenutzer = sqlsrv_query($conn, $stmtBenutzer, $paramsBenutzer);
-if ($insertBenutzer === false) {
-    die("Fehler beim Einfügen des Benutzers. Möglicherweise ist die E-Mail bereits vergeben.<br>");
+if (!$stmtBenutzer->execute()) {
+    die("Fehler beim Einfügen des Benutzers. Möglicherweise ist die E-Mail bereits vergeben.<br>" . $stmtBenutzer->error);
 }
 
-// Person einfügen
-$stmtPerson = "INSERT INTO dbo.Person (Anrede, Vorname, Nachname, Geburtstag, Strasse, Wohnort, PLZ, Telefonnummer, Bundesland, ProfilBild)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+$benutzerID = $stmtBenutzer->insert_id;
 
-$paramsPerson = array(
+// Person einfügen
+$stmtPerson = $conn->prepare("INSERT INTO Person (BenutzerID, Anrede, Vorname, Nachname, Geburtstag, Strasse, Wohnort, PLZ, Telefonnummer, Bundesland, ProfilBild)
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+if (!$stmtPerson) {
+    die("Fehler beim Vorbereiten der Personen-Abfrage: " . $conn->error);
+}
+
+$stmtPerson->bind_param(
+    "issssssssss",
+    $benutzerID,
     $_POST['anrede'],
     $_POST['Vorname'],
     $_POST['Nachname'],
@@ -45,13 +52,14 @@ $paramsPerson = array(
     $encoded
 );
 
-$insertPerson = sqlsrv_query($conn, $stmtPerson, $paramsPerson);
-if ($insertPerson === false) {
-    die("Fehler beim Einfügen der Person.<br>");
+if (!$stmtPerson->execute()) {
+    die("Fehler beim Einfügen der Person.<br>" . $stmtPerson->error);
 }
 
 // Verbindung schließen
-sqlsrv_close($conn);
+$stmtBenutzer->close();
+$stmtPerson->close();
+$conn->close();
 
 // Weiterleitung
 header("Location: landingPage.php");
