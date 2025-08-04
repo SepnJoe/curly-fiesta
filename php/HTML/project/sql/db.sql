@@ -37,7 +37,6 @@ CREATE TABLE IF NOT EXISTS Anschrift
     FOREIGN KEY (ort_id) REFERENCES Ort (ID)
 );
 
-
 -- Tabelle: Person
 CREATE TABLE IF NOT EXISTS Person
 (
