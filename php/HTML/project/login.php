@@ -7,8 +7,8 @@
 require_once 'db_connect.php';
 $conn = getDbConnection();
 
-$Pw =''; //Hier wird das Selectede Passwort aus der Datenbank Gespeichert
-$benutzerID =''; //Hier wird das Selectede Passwort aus der Datenbank Gespeichert
+$Pw = ''; //Hier wird das Selectede Passwort aus der Datenbank Gespeichert
+$benutzerID = ''; //Hier wird das Selectede Passwort aus der Datenbank Gespeichert
 
 // Benutzer anhand der E-Mail suchen
 $stmt = "SELECT * FROM dbo.Benutzer WHERE [E-Mail] = ?;";

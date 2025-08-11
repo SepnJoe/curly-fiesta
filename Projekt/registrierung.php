@@ -96,15 +96,25 @@ if ($row) {
 }
 
 //4 person einfügen
-$stmtInsertPerson = $conn->prepare("INSERT INTO person (anrede, vorname, nachname, geburtstag, `e-mail`, passwort, telefonnummer, fk_idAnschrift) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+$stmtInsertPerson = $conn->prepare("INSERT INTO person (anrede, vorname, nachname, geburtstag, `e-mail`, passwort, telefonnummer, profilbild, fk_idAnschrift) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 if (!$stmtInsertPerson) {
     die("Fehler beim Vorbereiten der Insert-Abfrage: " . $conn->error);
 }
 
+// Bildverarbeitung (optional)
+$encoded = null;
+if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] === UPLOAD_ERR_OK) {
+    $imageTmpPath = $_FILES['fileToUpload']['tmp_name'];
+    $imageData = file_get_contents($imageTmpPath);
+    $encoded = base64_encode($imageData);
+}
+
+
+
 $passwort = password_hash($_POST['Passwort'], PASSWORD_DEFAULT);
 
 $stmtInsertPerson->bind_param(
-    "sssssssi",
+    "ssssssssi",
     $_POST['Anrede'],
     $_POST['Vorname'],
     $_POST['Nachname'],
@@ -112,60 +122,12 @@ $stmtInsertPerson->bind_param(
     $_POST['EMail'],
     $passwort,
     $_POST['Telefonnummer'],
+    $encoded,
     $idAnschrift
 );
 if (!$stmtInsertPerson->execute()) {
     die("Fehler beim Einfügen der Person: " . $stmtInsertPerson->error);
 }
-
-
-//// Bildverarbeitung (optional)
-//$encoded = null;
-//if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] === UPLOAD_ERR_OK) {
-//    $imageTmpPath = $_FILES['fileToUpload']['tmp_name'];
-//    $imageData = file_get_contents($imageTmpPath);
-//    $encoded = base64_encode($imageData);
-//}
-
-// Benutzer einfügen
-//$stmtBenutzer = $conn->prepare("INSERT INTO Benutzer (`E-Mail`, Passwort) VALUES (?, ?)");
-//if (!$stmtBenutzer) {
-//    die("Fehler beim Vorbereiten der Benutzer-Abfrage: " . $conn->error);
-//}
-//$passwort = password_hash($_POST['Passwort'], PASSWORD_DEFAULT);
-//$stmtBenutzer->bind_param("ss", $email, $passwort);
-//
-//if (!$stmtBenutzer->execute()) {
-//    die("Fehler beim Einfügen des Benutzers. Möglicherweise ist die E-Mail bereits vergeben.<br>" . $stmtBenutzer->error);
-//}
-
-//$benutzerID = $stmtBenutzer->insert_id;
-
-// Person einfügen
-//$stmtPerson = $conn->prepare("INSERT INTO Person (BenutzerID, Anrede, Vorname, Nachname, Geburtstag, Strasse, Wohnort, PLZ, Telefonnummer, Bundesland, ProfilBild)
-//                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-//if (!$stmtPerson) {
-//    die("Fehler beim Vorbereiten der Personen-Abfrage: " . $conn->error);
-//}
-//
-//$stmtPerson->bind_param(
-//    "issssssssss",
-//    $benutzerID,
-//    $_POST['Anrede'],
-//    $_POST['Vorname'],
-//    $_POST['Nachname'],
-//    $_POST['Geburtstag'],
-//    $_POST['Strasse'],
-//    $_POST['Wohnort'],
-//    $_POST['PLZ'],
-//    $_POST['Telefonnummer'],
-//    $_POST['Bundesland'],
-//    $encoded
-//);
-//
-//if (!$stmtPerson->execute()) {
-//    die("Fehler beim Einfügen der Person.<br>" . $stmtPerson->error);
-//}
 
 // Verbindung schließen
 //$stmtBenutzer->close();

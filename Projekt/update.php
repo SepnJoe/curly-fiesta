@@ -1,11 +1,49 @@
-<!-- HTML CSS PHP - Titel
-     Autor: Feldinger Niklas
-     Datum: 03.06.2025 -->
-
 <?php
-
+session_start();
+//Datenbank Informationen
 require_once 'db_connect.php';
 $conn = getDbConnection();
+
+$anrede = '';
+$vorname = '';
+$nachname = '';
+$geburtstag = '';
+$email = '';
+$passwort = '';
+$telefonnummer = '';
+$profilBild = '';
+$fk_idAnschrif = '';
+$strasse = '';
+$hausnummer = '';
+$plz = '';
+$ort = '';
+
+// Benutzer anhand der benutzerId in Session suchen
+$stmtSelectPerson = $conn->prepare("SELECT * FROM person WHERE idPerson = ?");
+if (!$stmtSelectPerson) {
+    die("Fehler beim Vorbereiten der Abfrage: " . $conn->error);
+}
+
+$stmtSelectPerson->bind_param("s", $_SESSION['BenutzerId']);
+if (!$stmtSelectPerson->execute()) {
+    die("Fehler beim Abfragen des Benutzers." . $stmtSelectPerson->error);
+}
+
+$result = $stmtSelectPerson->get_result();
+$row = $result->fetch_assoc();
+if ($row) {
+    $anrede = $row['anrede'];
+    $vorname = $row['vorname'];
+    $nachname = $row['nachname'];
+    $geburtstag = $row['geburtstag'];
+    $emailAlt = $row['e-mail'];
+    $passwortAlt = $row['passwort'];
+    $telefonnummer = $row['telefonnummer'];
+    $profilBild = $row['profilbild'];
+    $fk_idAnschrift = $row['fk_idAnschrift'];
+} else {
+    die("Benutzername oder Passwort Falsch");
+}
 
 //1 prüfen ob email vorhanden
 $email = $_POST['EMail'];
@@ -22,7 +60,7 @@ if (!$stmtCheckMail->execute()) {
 $result = $stmtCheckMail->get_result();
 $row = $result->fetch_assoc();
 
-if ($row) {
+if ($emailAlt != $email && $row) {
     die("Fehler! E-Mail bereits vorhanden.");
 }
 
@@ -49,7 +87,7 @@ if ($row) {
     // Ort existiert nicht
     $stmtInsertOrt = $conn->prepare("INSERT INTO ort (plz, ort, fk_idLand) VALUES (?, ?, 1)");
     if (!$stmtInsertOrt) {
-        die("Fehler beim Vorbereiten der Insert-Abfrage: " . $conn->error);
+        die("Fehler beim Vorbereiten der ort Insert-Abfrage: " . $conn->error);
     }
 
     $stmtInsertOrt->bind_param("ss", $plz, $ort);
@@ -84,7 +122,7 @@ if ($row) {
     // Anschrift existiert nicht
     $stmtInsertAnschrift = $conn->prepare("INSERT INTO anschrift (strasse, hausnummer, fk_idOrt) VALUES (?, ?, ?)");
     if (!$stmtInsertAnschrift) {
-        die("Fehler beim Vorbereiten der Insert-Abfrage: " . $conn->error);
+        die("Fehler beim Vorbereiten der anschrift Insert-Abfrage: " . $conn->error);
     }
 
     $stmtInsertAnschrift->bind_param("ssi", $strasse, $hausnummer, $idOrt);
@@ -95,77 +133,34 @@ if ($row) {
     $idAnschrift = $stmtInsertAnschrift->insert_id; // Neue ID nach dem Insert
 }
 
-//4 person einfügen
-$stmtInsertPerson = $conn->prepare("INSERT INTO person (anrede, vorname, nachname, geburtstag, `e-mail`, passwort, telefonnummer, fk_idAnschrift) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-if (!$stmtInsertPerson) {
-    die("Fehler beim Vorbereiten der Insert-Abfrage: " . $conn->error);
+//4 person updaten
+$stmtUpdatePerson = $conn->prepare("
+    UPDATE person 
+    SET anrede = ?, vorname = ?, nachname = ?, geburtstag = ?, `e-mail` = ?, passwort = ?, telefonnummer = ?, profilbild = ?, fk_idAnschrift = ?
+    WHERE idPerson = ?");
+if (!$stmtUpdatePerson) {
+    die("Fehler beim Vorbereiten der person update-Abfrage: " . $conn->error);
 }
 
-$passwort = password_hash($_POST['Passwort'], PASSWORD_DEFAULT);
-
-$stmtInsertPerson->bind_param(
-    "sssssssi",
-    $_POST['Anrede'],
-    $_POST['Vorname'],
-    $_POST['Nachname'],
-    $_POST['Geburtstag'],
-    $_POST['EMail'],
-    $passwort,
-    $_POST['Telefonnummer'],
-    $idAnschrift
-);
-if (!$stmtInsertPerson->execute()) {
-    die("Fehler beim Einfügen der Person: " . $stmtInsertPerson->error);
+// Bildverarbeitung (optional)
+$encoded = null;
+if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] === UPLOAD_ERR_OK) {
+    $imageTmpPath = $_FILES['fileToUpload']['tmp_name'];
+    $imageData = file_get_contents($imageTmpPath);
+    $encoded = base64_encode($imageData);
 }
 
+if ($_POST['Passwort']) {
+    $passwort = password_hash($_POST['Passwort'], PASSWORD_DEFAULT);
+} else{
+    $passwort = $passwortAlt;
+}
 
-//// Bildverarbeitung (optional)
-//$encoded = null;
-//if (isset($_FILES['fileToUpload']) && $_FILES['fileToUpload']['error'] === UPLOAD_ERR_OK) {
-//    $imageTmpPath = $_FILES['fileToUpload']['tmp_name'];
-//    $imageData = file_get_contents($imageTmpPath);
-//    $encoded = base64_encode($imageData);
-//}
+$stmtUpdatePerson->bind_param("ssssssssii", $_POST['Anrede'], $_POST['Vorname'], $_POST['Nachname'], $_POST['Geburtstag'], $_POST['EMail'], $passwort, $_POST['Telefonnummer'], $encoded, $idAnschrift, $_SESSION['BenutzerId']);
 
-// Benutzer einfügen
-//$stmtBenutzer = $conn->prepare("INSERT INTO Benutzer (`E-Mail`, Passwort) VALUES (?, ?)");
-//if (!$stmtBenutzer) {
-//    die("Fehler beim Vorbereiten der Benutzer-Abfrage: " . $conn->error);
-//}
-//$passwort = password_hash($_POST['Passwort'], PASSWORD_DEFAULT);
-//$stmtBenutzer->bind_param("ss", $email, $passwort);
-//
-//if (!$stmtBenutzer->execute()) {
-//    die("Fehler beim Einfügen des Benutzers. Möglicherweise ist die E-Mail bereits vergeben.<br>" . $stmtBenutzer->error);
-//}
-
-//$benutzerID = $stmtBenutzer->insert_id;
-
-// Person einfügen
-//$stmtPerson = $conn->prepare("INSERT INTO Person (BenutzerID, Anrede, Vorname, Nachname, Geburtstag, Strasse, Wohnort, PLZ, Telefonnummer, Bundesland, ProfilBild)
-//                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-//if (!$stmtPerson) {
-//    die("Fehler beim Vorbereiten der Personen-Abfrage: " . $conn->error);
-//}
-//
-//$stmtPerson->bind_param(
-//    "issssssssss",
-//    $benutzerID,
-//    $_POST['Anrede'],
-//    $_POST['Vorname'],
-//    $_POST['Nachname'],
-//    $_POST['Geburtstag'],
-//    $_POST['Strasse'],
-//    $_POST['Wohnort'],
-//    $_POST['PLZ'],
-//    $_POST['Telefonnummer'],
-//    $_POST['Bundesland'],
-//    $encoded
-//);
-//
-//if (!$stmtPerson->execute()) {
-//    die("Fehler beim Einfügen der Person.<br>" . $stmtPerson->error);
-//}
+if (!$stmtUpdatePerson->execute()) {
+    die("Fehler beim updaten der Person: " . $stmtUpdatePerson->error);
+}
 
 // Verbindung schließen
 //$stmtBenutzer->close();
@@ -173,6 +168,5 @@ if (!$stmtInsertPerson->execute()) {
 $conn->close();
 
 // Weiterleitung
-header("Location: landingPage.php");
+header("Location: profil.php");
 exit;
-?>
