@@ -1,3 +1,7 @@
+<!-- Titel:
+     Autor: Feldinger Niklas
+     Datum:  -->
+
 <?php
 function getDbConnection()
 {

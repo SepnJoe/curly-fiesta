@@ -1,6 +1,7 @@
-<!-- HTML CSS PHP - Titel
+<!-- Titel:
      Autor: Feldinger Niklas
-     Datum: 03.06.2025 -->
+     Datum:  -->
+
 <?php
 session_start();
 ?>

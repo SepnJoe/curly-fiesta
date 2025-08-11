@@ -1,3 +1,7 @@
+<!-- Titel:
+     Autor: Feldinger Niklas
+     Datum:  -->
+
 <?php
 //Datenbank Informationen
 require_once 'db_connect.php';
