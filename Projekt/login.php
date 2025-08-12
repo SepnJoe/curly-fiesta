@@ -1,9 +1,10 @@
-<!-- Titel:
+<!-- HTML CSS PHP - Titel
      Autor: Feldinger Niklas
-     Datum:  -->
+     Datum: 03.06.2025 -->
 
 <?php
 session_start();
+
 //Datenbank Informationen
 require_once 'db_connect.php';
 $conn = getDbConnection();
@@ -29,6 +30,8 @@ if ($row) {
     $benutzerID = $row['idPerson'];
     if (password_verify($_POST["password"], $pw)) {
         // Login erfolgreich – Session setzen
+        // Session aktualisieren
+        $_SESSION['last_activity'] = time();
         $_SESSION["username"] = $_POST["username"];
         $_SESSION["BenutzerId"] = $benutzerID;
 
@@ -40,6 +43,7 @@ if ($row) {
 } else {
     die("Benutzername oder Passwort Falsch");
 }
+
 
 
 // Verbindung schließen

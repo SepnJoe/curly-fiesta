@@ -1,7 +1,3 @@
-<!-- Titel:
-     Autor: Feldinger Niklas
-     Datum:  -->
-
 <?php
 require_once 'db_connect.php';
 $conn = getDbConnection();

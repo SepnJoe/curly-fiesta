@@ -1,6 +1,6 @@
-<!-- Titel:
+<!-- HTML CSS PHP - Titel
      Autor: Feldinger Niklas
-     Datum:  -->
+     Datum: 03.06.2025 -->
 
 <?php
 require_once 'db_connect.php';
@@ -47,7 +47,6 @@ $hausnummer = $row['hausnummer'];
 $plz = $row['plz'];
 $ort = $row['ort'];
 
-
 // Verbindung schließen
 $conn->close();
 ?>
@@ -81,7 +80,6 @@ $conn->close();
         </header>
 
         <main>
-
             <p><strong>Anrede:</strong> <?= htmlspecialchars($anrede) ?></p>
             <p><strong>Vorname:</strong> <?= htmlspecialchars($vorname) ?></p>
             <p><strong>Nachname:</strong> <?= htmlspecialchars($nachname) ?></p>

@@ -1,7 +1,3 @@
-<!-- Titel:
-     Autor: Feldinger Niklas
-     Datum:  -->
-
 <?php
 //Datenbank Informationen
 require_once 'db_connect.php';
@@ -44,52 +40,49 @@ $result = $stmt->get_result();
 
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
     <meta charset="UTF-8">
     <title>Personenliste</title>
     <link rel="stylesheet" type="text/css" href="monitoring.css">
 </head>
-
 <body>
-    <h1>Personenliste</h1>
-    <form method="get">
-        <input type="text" name="filter" placeholder="Suche" value="<?= htmlspecialchars($filter) ?>">
-        <select name="sort">
-            <option value="">Sortieren nach</option>
-            <?php foreach ($allowedSortFields as $field): ?>
-                <option value="<?= $field ?>" <?= $sortBy === $field ? 'selected' : '' ?>><?= $field ?></option>
-            <?php endforeach; ?>
-        </select>
-        <select name="order">
-            <option value="asc" <?= $order === 'asc' ? 'selected' : '' ?>>Aufsteigend</option>
-            <option value="desc" <?= $order === 'desc' ? 'selected' : '' ?>>Absteigend</option>
-        </select>
-        <input type="submit" value="Anwenden">
-    </form>
+<h1>Personenliste</h1>
+<form method="get">
+    <input type="text" name="filter" placeholder="Suche" value="<?= htmlspecialchars($filter) ?>">
+    <select name="sort">
+        <option value="">Sortieren nach</option>
+        <?php foreach ($allowedSortFields as $field): ?>
+            <option value="<?= $field ?>" <?= $sortBy === $field ? 'selected' : '' ?>><?= $field ?></option>
+        <?php endforeach; ?>
+    </select>
+    <select name="order">
+        <option value="asc" <?= $order === 'asc' ? 'selected' : '' ?>>Aufsteigend</option>
+        <option value="desc" <?= $order === 'desc' ? 'selected' : '' ?>>Absteigend</option>
+    </select>
+    <input type="submit" value="Anwenden">
+</form>
 
-    <table>
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Anrede</th>
+        <th>Vorname</th>
+        <th>Nachname</th>
+        <th>Geburtstag</th>
+        <th>E-Mail</th>
+        <th>Telefonnummer</th>
+    </tr>
+    <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
-            <th>ID</th>
-            <th>Anrede</th>
-            <th>Vorname</th>
-            <th>Nachname</th>
-            <th>Geburtstag</th>
-            <th>E-Mail</th>
-            <th>Telefonnummer</th>
+            <td><?= htmlspecialchars($row['idPerson']) ?></td>
+            <td><?= htmlspecialchars($row['Anrede']) ?></td>
+            <td><?= htmlspecialchars($row['Vorname']) ?></td>
+            <td><?= htmlspecialchars($row['Nachname']) ?></td>
+            <td><?= htmlspecialchars($row['Geburtstag']) ?></td>
+            <td><?= htmlspecialchars($row['e-mail']) ?></td>
+            <td><?= htmlspecialchars($row['Telefonnummer']) ?></td>
         </tr>
-        <?php while ($row = $result->fetch_assoc()): ?>
-            <tr>
-                <td><?= htmlspecialchars($row['idPerson']) ?></td>
-                <td><?= htmlspecialchars($row['Anrede']) ?></td>
-                <td><?= htmlspecialchars($row['Vorname']) ?></td>
-                <td><?= htmlspecialchars($row['Nachname']) ?></td>
-                <td><?= htmlspecialchars($row['Geburtstag']) ?></td>
-                <td><?= htmlspecialchars($row['e-mail']) ?></td>
-                <td><?= htmlspecialchars($row['Telefonnummer']) ?></td>
-            </tr>
-        <?php endwhile; ?>
-    </table>
+    <?php endwhile; ?>
+</table>
 </body>
-
 </html>

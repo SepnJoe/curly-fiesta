@@ -13,10 +13,8 @@ Unterschied Identifying und non-Identifying!
 ![img_2.png](img_2.png)
 
 6. Forward Engineer
-   7. Drop Pbject before CREATE aktivieren 
+   7. Drop Object before CREATE aktivieren 
    8. Visible entfernen
 
 7. Apache starten 
    8. http://localhost/phpmyadmin/
-
-

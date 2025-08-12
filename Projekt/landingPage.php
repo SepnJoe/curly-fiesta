@@ -1,9 +1,9 @@
-<!-- Titel:
+<!-- HTML CSS PHP - Titel
      Autor: Feldinger Niklas
-     Datum:  -->
+     Datum: 03.06.2025 -->
 
 <?php
-session_start();
+require 'session.php'
 ?>
 
 <!DOCTYPE html>

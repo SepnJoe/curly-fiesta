@@ -1,7 +1,3 @@
-<!-- Titel:
-     Autor: Feldinger Niklas
-     Datum:  -->
-
 <?php
 session_start();
 //Datenbank Informationen

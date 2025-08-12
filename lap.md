@@ -4,8 +4,6 @@
 - Visual Studio Code 
 - - PHP Intelephense
 - zusammenfassung (Scs)
-- eventuell DB Informationen als Enum?
-
 
 # XAMPP
 1. landingPage.php
