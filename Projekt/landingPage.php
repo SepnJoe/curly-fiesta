@@ -12,12 +12,12 @@ require 'session.php'
 <head>
     <link rel="stylesheet" href="styling.css">
     <title>Raiffeisen Produkt</title>
-</head>
+</head> 
 <div class="container">
     <header>
         <h1><img src="assets/logo.png" alt="Logo" class="logo">Raiffeisen Produkt</h1>
-
         <br>
+
         <?php
         if (isset($_SESSION['username'])) {
             echo '<a href="logout.php" style="margin-left: 20px">Logout</a>';

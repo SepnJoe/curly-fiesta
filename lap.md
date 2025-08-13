@@ -27,3 +27,6 @@ buttons einzeln
     <div><a class="editButton" href="feldBearbeiten.php?feld=Strasse"><strong>Strasse:</strong> <?= htmlspecialchars($strasse) ?></a></div>
     <div><a class="editButton" href="feldBearbeiten.php?feld=Hausnummer"><strong>Hausnummer:</strong> <?= htmlspecialchars($hausnummer) ?></a></div>
 </div>
+
+https://github.com/ReiterLeon/LAP2024/tree/main
+https://github.com/SenselessCoding

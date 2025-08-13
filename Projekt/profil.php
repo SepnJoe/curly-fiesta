@@ -3,9 +3,9 @@
      Datum: 03.06.2025 -->
 
 <?php
-require_once 'db_connect.php';
+require 'db_connect.php';
+require 'session.php';
 $conn = getDbConnection();
-session_start();
 
 // Prüfen, ob Benutzer eingeloggt ist
 if (!isset($_SESSION['BenutzerId'])) {

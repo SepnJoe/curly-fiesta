@@ -18,3 +18,8 @@ Unterschied Identifying und non-Identifying!
 
 7. Apache starten 
    8. http://localhost/phpmyadmin/
+
+
+
+
+![img_3.png](img_3.png)

@@ -1,6 +1,7 @@
 <?php
 //Datenbank Informationen
 require_once 'db_connect.php';
+require 'session.php';
 $conn = getDbConnection();
 
 $filter = strtolower($_GET['filter'] ?? '');
